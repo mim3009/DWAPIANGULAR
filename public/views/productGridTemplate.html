@@ -1,0 +1,18 @@
+<div class="row">
+	<div class="col-sm-4" ng-repeat="product in products">
+		<div class="productItem well panel">
+			<img src="{{product.imgLink}}" class="img-responsive" alt="Product Image">
+			<p class="productName">{{product.name}}</p>
+			<div class="productInfo">
+				<p>Size: {{product.size}}</p>
+				<p>Color: {{product.color}}</p>
+				<p>Price: {{product.price | currency}}</p>
+			</div>
+			<div class="addToCart">
+				<p>qty:<input type="number" min="1" max="{{product.count}}" ng-model="product.qty" ng-init="product.qty = 1"></p>
+				<button class="btn btn-primary" ng-click="addProductToCart(product)">Add to cart</button>
+			</div>
+			<div class="clear"></div>
+		</div>		
+	</div>
+</div>

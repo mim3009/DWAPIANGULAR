@@ -1,0 +1,26 @@
+.productItem {
+	width: 54%;
+    margin: auto;
+    display: block;
+}
+
+.productItem > .productName {
+	text-align: center;
+}
+
+.productItem > img {
+	display: block;
+	margin: auto;
+}
+
+.productItem > .productInfo {
+	float: left;
+}
+
+.productItem > .addToCart {
+	float: right;
+}
+
+.clear {
+	clear: both;
+}
