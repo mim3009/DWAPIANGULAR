@@ -9,55 +9,31 @@
 	<script src="https://code.jquery.com/jquery-3.2.0.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script>
-		angular.module('sitegenesisStore', ['cart'])
-			.controller('mainCtrl', function ($scope, $http) {
+		angular.module('sitegenesisStore', ['cart', 'productGrid', 'requestor'])
+			.controller('mainCtrl', function ($scope, requestor) {
 				$scope.storeName = "STOREFRONT SHOP";
 
 				$scope.data = {};
 
 				$scope.getProducts = function (productsQuery) {
-					$http({
-						method : "GET",
-						url : "/getProduct",
-						params : {"query" : productsQuery}
-					}).then(function (response) {
-						$scope.data.products = response.data;
-					}, function (error) {
-						//$scope.data.error = error;
-						console.log(error);
-					});
+					requestor.makeRequest("GET", "/getProduct", function (data) {
+						$scope.data.products = data;
+					}, {"query" : productsQuery});
 				};
 
 				var login = function () {
-					$http({
-						method : "GET",
-						url : "/login",
-					}).then(function (response) {
-						$scope.token = response.data;
-					}, function (error) {
-						//$scope.data.error = error;
-						console.log(error);
+					requestor.makeRequest("GET", "/login", function (data) {
+						console.log("logged IN");
 					});
 				}
 
 				login();
-			})
-			.directive("productGrid", function () {
-				return {
-					restrict : "E",
-					templateUrl : "./views/productGridTemplate.html",
-					scope : {
-						products : "=products"
-					},
-					controller : function ($scope, cart) {
-						$scope.addProductToCart = function (product) {
-							cart.addProduct(product);
-						}
-					}
-				}
 			});
 	</script>
 	<script src="components/cart/cart.js"></script>
+	<script src="components/productGrid/productGrid.js"></script>
+	<script src="components/requestor.js"></script>
+	<script src="components/paypal.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 </head>
 <body ng-controller="mainCtrl">
@@ -76,12 +52,13 @@
 		        </div>
 	        </form>
 	    </div>
-	    <cart-summary/>
+	    <cart-summary></cart-summary>
 	</nav>
 	
-	<product-grid products="data.products"/>
+	<product-grid products="data.products"></product-grid>
 
-	<script src="javascripts/functions.js"></script>
+	<div id="paypal-button-container"></div>
+
 	<script src="https://www.paypalobjects.com/api/checkout.js"></script>
 </body>
 </html>

@@ -28,33 +28,35 @@ app.get('/login', function(req, res){
    		body: JSON.stringify({"type":"guest"})
     }, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
-			res.end(response.headers.authorization);
+			res.json(response);
 		}
 	});
 });
 
 app.get('/getProduct', function(req, res) {
 	var query = req.query.query;
-	var token = req.query.token;
 
 	request.get({
         url: 'https://pulsarfour03-alliance-prtnr-eu05-dw.demandware.net/s/Sites-SiteGenesisRomaTasks-Site/dw/shop/v16_4/product_search?q=' + query + '*&expand=images,prices,variations',
-        headers: {
-        	"Authorization": token
-    	}
     }, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
+			var token = response.headers.authorization;
 			var parsedBody = JSON.parse(body);
 			var masterIDs = [];
-			for (var i = 0; i < parsedBody.hits.length; i++) {
-				masterIDs.push(parsedBody.hits[i].product_id);
-			}
+			if (parsedBody.hits) {
+				for (var i = 0; i < parsedBody.hits.length; i++) {
+					masterIDs.push(parsedBody.hits[i].product_id);
+				}
 
-			getAllVariants(masterIDs, token, function(products) {
-			    getAllVariantsInfo(products, token, function(info) {
-			    	res.json(info);
-			    });
-			});
+				getAllVariants(masterIDs, token, function(products) {
+				    getAllVariantsInfo(products, token, function(info) {
+				    	res.json(info);
+				    });
+				});
+			}
+			else {
+				res.json({});
+			}
 		}
 	})
 });
@@ -74,11 +76,11 @@ app.get('/getBasket', function(req, res) {
 });
 
 app.post('/addItemToBasket', function(req, res) {
-	var pid = req.body.pid;
-	var qty = req.body.qty;
-	var token = req.body.token;
-	var ifmatch = req.body.ifmatch;
-	var basket_id = req.body.basket_id;
+	var pid = req.query.pid;
+	var qty = req.query.qty;
+	var token = req.query.token;
+	var ifmatch = req.query.ifmatch;
+	var basket_id = req.query.basket_id;
 
 	request.post({
         url: 'https://pulsarfour03-alliance-prtnr-eu05-dw.demandware.net/s/Sites-SiteGenesisRomaTasks-Site/dw/shop/v16_4/baskets/' + basket_id + '/items',
@@ -91,16 +93,13 @@ app.post('/addItemToBasket', function(req, res) {
 		if (!error && response.statusCode == 200) {
 			res.json(response);
 		}
-		else if (response.statusCode > 200) {
-			console.log(response);
-		}
 	});
 });
 
 app.post('/setBasket', function(req, res) {
-	var token = req.body.token;
-	var ifmatch = req.body.ifmatch;
-	var basket_id = req.body.basket_id;
+	var token = req.query.token;
+	var ifmatch = req.query.ifmatch;
+	var basket_id = req.query.basket_id;
 
 	request.put({
         url: 'https://pulsarfour03-alliance-prtnr-eu05-dw.demandware.net/s/Sites-SiteGenesisRomaTasks-Site/dw/shop/v16_4/baskets/' + basket_id + '/billing_address',
@@ -211,10 +210,10 @@ function getAllVariantsInfo(references, token, cb){
 }
 
 app.delete('/deleteItemFromBasket', function(req, res) {
-	var token = req.body.token;
-	var ifmatch = req.body.ifmatch;
-	var basket_id = req.body.basket_id;
-	var pid = req.body.pid;
+	var token = req.query.token;
+	var ifmatch = req.query.ifmatch;
+	var basket_id = req.query.basket_id;
+	var pid = req.query.pid;
 
 	request.delete({
         url: 'https://pulsarfour03-alliance-prtnr-eu05-dw.demandware.net/s/Sites-SiteGenesisRomaTasks-Site/dw/shop/v16_4/baskets/' + basket_id + '/items/' + pid,
@@ -230,10 +229,10 @@ app.delete('/deleteItemFromBasket', function(req, res) {
 });
 
 app.post('/placeOrder', function(req, res) {
-	var token = req.body.token;
-	var ifmatch = req.body.ifmatch;
-	var basket_id = req.body.basket_id;
-	var amount = req.body.amount;
+	var token = req.query.token;
+	var ifmatch = req.query.ifmatch;
+	var basket_id = req.query.basket_id;
+	var amount = req.query.amount;
 
 	request.post({
         url: 'https://pulsarfour03-alliance-prtnr-eu05-dw.demandware.net/s/Sites-SiteGenesisRomaTasks-Site/dw/shop/v16_4/baskets/' + basket_id + '/payment_instruments',

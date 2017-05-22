@@ -1,47 +1,65 @@
-angular.module("cart", [])
-.factory('cart', function ($http) {
+angular.module("cart", ['requestor', 'paypal'])
+	.factory('cart', function (requestor, paypal) {
 	
-	var cart = {
-		data: {
-			product_total : 0
-		}
-	};
+		var cart = {
+			data: {
+				product_total : 0
+			}
+		};
 
-	return {
-		addProduct: function (product) {
-			$http({
-				method : "POST",
-				url : "/addItemToBasket",
-				data : {
+		function getBasket(basketLoaded) {
+			requestor.makeRequest("GET", "/getBasket", function(data) {
+				requestor.makeRequest("POST", "/setBasket", function(data) {
+					basketLoaded();
+				}, { "basket_id" : requestor.getBasketID()});
+			});
+		}
+
+		function addProductToCart(data) {
+			data.basket_id = requestor.getBasketID();
+			requestor.makeRequest("POST", "/addItemToBasket", function(data) {
+				cart.data = data;
+				paypal.renderPayPalBtn(data);
+			}, data);
+		}
+
+		return {
+			addProduct: function (product) {
+				var data = {
 					"pid" : product.id,
 					"qty" : product.qty
+				};
+
+				if (!requestor.getBasketID()) {
+					getBasket(function() {
+						addProductToCart(data);
+					});
 				}
-			}).then(function (response) {
-				console.log(response.data);
-				cart.data = response.data;
-				console.log(cart.data);
-			}, function (error) {
-				console.log(error);
-			});
-		},
+				else {
+					addProductToCart(data);
+				}
+			},
 
-		removeProduct: function (id) {
-			
-		},
+			removeProduct: function (product) {
+				requestor.makeRequest("DELETE", "/deleteItemFromBasket", function(data) {
+					cart.data = data;
+					paypal.renderPayPalBtn(data);
+				}, { "pid" : product.id, "basket_id" : requestor.getBasketID() });
+			},
 
-		getCart: function () {
-			return cart.data;
-		}
-	};
-})
-.directive("cartSummary", function (cart) {
-	return {
-		restrict: "E",
-		templateUrl: "components/cart/cartSummary.html",
-		controller: function ($scope) {
-			$scope.$watch(function(){return cart.getCart()}, function(){
-		      	$scope.cartData = cart.getCart();
-		    });
-		}
-	};
-});
+			getCart: function () {
+				return cart.data;
+			}
+		};
+	})
+	.directive("cartSummary", function (cart) {
+		return {
+			restrict: "E",
+			templateUrl: "components/cart/cartSummary.html",
+			controller: function ($scope) {
+				$scope.$watch(function(){return cart.getCart()}, function(){
+			      	$scope.cartData = cart.getCart();
+			    });
+			}
+		};
+	});

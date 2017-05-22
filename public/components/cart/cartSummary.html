@@ -1,12 +1,21 @@
 <style>
 	.navbar-right {
 		float: right !important;
-		margin-right: 5px;
+		margin-right: 15px;
+	}
+
+	.navbar-text {
+		margin-top: 0px !important;
+		margin-bottom: 0px !important;
 	}
 </style>
 <div class="navbar-right">
 	<div class="navbar-text">
 		<b>Your cart: {{cartData.product_total | currency}}</b>
+		<div class="btn-group" data-toggle="buttons">
+			<label class="btn btn-default navbar-btn glyphicon glyphicon-shopping-cart">
+			    <input type="checkbox" autocomplete="off">
+			</label>
+		</div>
 	</div>
-	<a href="#/checkout" class="btn btn-default navbar-btn">Checkout</a>
 </div>
