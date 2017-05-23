@@ -3,7 +3,7 @@ angular.module('paypal', ['requestor'])
 		return {
 			renderPayPalBtn : function(basketData) {
 				$("#paypal-button-container").remove();
-				$(document.body).append("<div id='paypal-button-container'></div>");
+				$("#paypal").append("<div id='paypal-button-container'></div>");
 				paypal.Button.render({
 			        env: 'sandbox',
 			        client: {
@@ -43,7 +43,6 @@ angular.module('paypal', ['requestor'])
 			        onAuthorize: function(data, actions) {
 			    		return actions.payment.execute().then(function() {
 			        		requestor.makeRequest("POST", "/placeOrder", function(data) {
-			        			$("#paypal-button-container").remove();
 								alert("Thank you for purchase! Please come back, we always waiting for you!");
 							}, { "amount" : basketData.order_total, "basket_id" : requestor.getBasketID() });
 			            });

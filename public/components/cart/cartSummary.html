@@ -1,21 +1,60 @@
 <style>
 	.navbar-right {
-		float: right !important;
+		float: right;
 		margin-right: 15px;
 	}
 
-	.navbar-text {
-		margin-top: 0px !important;
-		margin-bottom: 0px !important;
+	.navbar-btn {
+	    margin-top: 4px;
+	    margin-bottom: 0px;
+	}
+
+	.dropdown-menu {
+		margin: 0;
+		padding: 0;
+	}
+
+	.dropdown-menu.well {
+		margin: 0;
+		width: 500px;
+	}
+
+	.right {
+		float: right;
+		margin: 10px;
+	}
+
+	.left {
+		float: left;
+		margin: 17px 0px 0px 7px;
+	}
+
+	p {
+		margin: 0 0 3px;
+	}
+
+	#paypal {
+		float: right;
+    	margin: 7px;
+    	max-height: 30px;
 	}
 </style>
-<div class="navbar-right">
-	<div class="navbar-text">
-		<b>Your cart: {{cartData.product_total | currency}}</b>
-		<div class="btn-group" data-toggle="buttons">
-			<label class="btn btn-default navbar-btn glyphicon glyphicon-shopping-cart">
-			    <input type="checkbox" autocomplete="off">
-			</label>
-		</div>
+<div class="nav navbar-nav navbar-right">
+	<b class="navbar-text">Your cart: {{cartData.order_total | currency}}</b>
+	<div class="btn-group navbar-btn">
+		<button data-toggle="dropdown" class="btn btn-default navbar-btn glyphicon glyphicon-shopping-cart dropdown-toggle" ng-disabled="cartData.order_total == 0"></button>
+		<ul class="dropdown-menu well">
+	   		<li class="product" ng-repeat="product in cartData.product_items">
+   				<div class="left">
+	   				<p>Name: {{product.product_name}} Price: {{product.price | currency}} Quantity: {{product.quantity}}</p>
+	   			</div>
+	   			<div class="right">
+	   				<button class="btn btn-primary" ng-click="deleteProductFromBasket(product)">Remove</button>
+	   			</div>
+	   			<div class="clear"></div>
+	   		</li>
+	   		<li class="divider"></li>
+	   		<div id="paypal"></div>
+	    </ul>
 	</div>
 </div>

@@ -3,7 +3,7 @@ angular.module("cart", ['requestor', 'paypal'])
 	
 		var cart = {
 			data: {
-				product_total : 0
+				order_total : 0
 			}
 		};
 
@@ -44,7 +44,7 @@ angular.module("cart", ['requestor', 'paypal'])
 				requestor.makeRequest("DELETE", "/deleteItemFromBasket", function(data) {
 					cart.data = data;
 					paypal.renderPayPalBtn(data);
-				}, { "pid" : product.id, "basket_id" : requestor.getBasketID() });
+				}, { "pid" : product.item_id, "basket_id" : requestor.getBasketID() });
 			},
 
 			getCart: function () {
@@ -52,14 +52,19 @@ angular.module("cart", ['requestor', 'paypal'])
 			}
 		};
 	})
-	.directive("cartSummary", function (cart) {
+	.controller('cartCtrl', function($scope, cart) {
+		$scope.$watch(function(){return cart.getCart()}, function(){
+	      	$scope.cartData = cart.getCart();
+	    });
+
+	    $scope.deleteProductFromBasket = function (product) {
+			cart.removeProduct(product);
+		}
+	})
+	.directive("cartSummary", function () {
 		return {
 			restrict: "E",
 			templateUrl: "components/cart/cartSummary.html",
-			controller: function ($scope) {
-				$scope.$watch(function(){return cart.getCart()}, function(){
-			      	$scope.cartData = cart.getCart();
-			    });
-			}
+			controller: "cartCtrl"
 		};
 	});
