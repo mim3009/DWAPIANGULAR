@@ -19,7 +19,12 @@ angular.module("cart", ['requestor', 'paypal'])
 			data.basket_id = requestor.getBasketID();
 			requestor.makeRequest("POST", "/addItemToBasket", function(data) {
 				cart.data = data;
-				paypal.renderPayPalBtn(data);
+				if (cart.data.order_total > 0) {
+					paypal.renderPayPalBtn(data);
+				}
+				else {
+					$("#paypal-button-container").remove();
+				}
 			}, data);
 		}
 
@@ -43,7 +48,12 @@ angular.module("cart", ['requestor', 'paypal'])
 			removeProduct: function (product) {
 				requestor.makeRequest("DELETE", "/deleteItemFromBasket", function(data) {
 					cart.data = data;
-					paypal.renderPayPalBtn(data);
+					if (cart.data.order_total > 0) {
+						paypal.renderPayPalBtn(data);
+					}
+					else {
+						$("#paypal-button-container").remove();
+					}
 				}, { "pid" : product.item_id, "basket_id" : requestor.getBasketID() });
 			},
 

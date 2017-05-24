@@ -210,7 +210,6 @@ function getAllVariantsInfo(references, token, cb){
 }
 
 app.delete('/deleteItemFromBasket', function(req, res) {
-	console.log(req);
 	var token = req.query.token;
 	var ifmatch = req.query.ifmatch;
 	var basket_id = req.query.basket_id;
@@ -224,7 +223,6 @@ app.delete('/deleteItemFromBasket', function(req, res) {
     	},
     }, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
-			console.log(response);
 			res.json(response);
 		}
 	});
