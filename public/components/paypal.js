@@ -1,5 +1,6 @@
 angular.module('paypal', ['requestor'])
-	.factory('paypal', function (requestor) {
+	.factory('paypal', function (requestor, $injector) {
+		var cart;
 		return {
 			renderPayPalBtn : function(basketData) {
 				$("#paypal-button-container").remove();
@@ -43,6 +44,10 @@ angular.module('paypal', ['requestor'])
 			        onAuthorize: function(data, actions) {
 			    		return actions.payment.execute().then(function() {
 			        		requestor.makeRequest("POST", "/placeOrder", function(data) {
+			        			if (!cart) {
+			        				cart = $injector.get('cart');
+			        			}
+			        			cart.checkoutCompleted();
 								alert("Thank you for purchase! Please come back, we always waiting for you!");
 							}, { "amount" : basketData.order_total, "basket_id" : requestor.getBasketID() });
 			            });

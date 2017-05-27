@@ -59,6 +59,13 @@ angular.module("cart", ['requestor', 'paypal'])
 
 			getCart: function () {
 				return cart.data;
+			},
+
+			checkoutCompleted: function () {
+				$(".btn-group.navbar-btn.open").removeClass("open");
+				cart.data = {
+					order_total : 0
+				};
 			}
 		};
 	})
