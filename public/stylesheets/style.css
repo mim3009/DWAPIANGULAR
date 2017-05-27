@@ -24,3 +24,43 @@
 .clear {
 	clear: both;
 }
+
+.navbar-right {
+	float: right;
+	margin-right: 15px;
+}
+
+.navbar-btn {
+    margin-top: 4px;
+    margin-bottom: 0px;
+}
+
+.dropdown-menu {
+	margin: 0;
+	padding: 0;
+}
+
+.dropdown-menu.well {
+	margin: 0;
+	width: 500px;
+}
+
+.right {
+	float: right;
+	margin: 10px;
+}
+
+.left {
+	float: left;
+	margin: 17px 0px 0px 7px;
+}
+
+p {
+	margin: 0 0 3px;
+}
+
+#paypal {
+	float: right;
+	margin: 7px;
+	max-height: 30px;
+}
